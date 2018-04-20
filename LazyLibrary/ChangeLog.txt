@@ -1,0 +1,5 @@
+1.12.2-1.0.0.0
+    - Initial Build
+    - Create a system of automatic registration of Items, blocks, recipes and smelting recipes
+    - Created a NBTIngredient class that checks for nbt agreement and an accompanying helper function
+    - Added Changelog.txt and BugLog.txt

@@ -1,0 +1,1 @@
+1 - Z_Dcotor - 4/19/2018 - A problem with Vanilla Recipe book when auto placing potions as ingredients when picking from know recipes. All ingredients, besides the potion, are placed. No problem crafting.
