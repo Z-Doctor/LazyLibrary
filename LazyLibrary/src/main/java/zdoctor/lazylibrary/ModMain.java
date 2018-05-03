@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import zdoctor.lazylibrary.proxy.CommonProxy;
 
-@Mod(modid = ModMain.MODID, version = "1.0")
+@Mod(modid = ModMain.MODID, version = "1.1.0.0")
 public class ModMain {
 	public static final String MODID = "lazylibrary";
 

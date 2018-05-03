@@ -1,5 +1,7 @@
 package zdoctor.lazylibrary.common.api;
 
+import net.minecraft.util.ResourceLocation;
+
 public interface IAutoRegister {
 	
 	public RegisterType getType();
@@ -10,9 +12,11 @@ public interface IAutoRegister {
 		ITEM,
 		BLOCK,
 		ORE,
-		TILEENTITY,
+		TILE_ENTITY,
 		ENTITY;
 	}
 
-	String getSubName(int meta);
+	public String getSubName(int meta);
+	
+	public ResourceLocation getRegistryName();
 }

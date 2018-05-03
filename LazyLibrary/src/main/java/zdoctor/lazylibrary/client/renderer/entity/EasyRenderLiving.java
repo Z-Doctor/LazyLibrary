@@ -7,14 +7,12 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import zdoctor.lazylibrary.common.api.IAutoRegisterLivingEntity;
-import zdoctor.lazylibrary.common.library.EasyRegistry;
 
 @SideOnly(Side.CLIENT)
 public abstract class EasyRenderLiving <T extends EntityLiving> extends RenderLiving<T> implements IAutoRegisterLivingEntity {
 
 	public EasyRenderLiving(RenderManager rendermanagerIn, ModelBase modelbaseIn, float shadowsizeIn) {
 		super(rendermanagerIn, modelbaseIn, shadowsizeIn);
-		EasyRegistry.register(this);
 	}
 
 }

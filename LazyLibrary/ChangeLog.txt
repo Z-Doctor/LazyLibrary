@@ -1,3 +1,6 @@
+1.12.2-1.0.1.0
+    - Added a system to make adding enitites easier
+    - Added texture helper from LazyModder
 1.12.2-1.0.0.0
     - Initial Build
     - Create a system of automatic registration of Items, blocks, recipes and smelting recipes

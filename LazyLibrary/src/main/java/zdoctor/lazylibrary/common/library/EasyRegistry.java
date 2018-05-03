@@ -7,8 +7,6 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import zdoctor.lazylibrary.common.api.IAutoRegister;
 import zdoctor.lazylibrary.common.api.IAutoRegisterLivingEntity;
 import zdoctor.lazylibrary.common.api.ICraftable;
@@ -21,6 +19,7 @@ public class EasyRegistry {
 	protected static final ArrayList<Block> BLOCK_REGISTRY = new ArrayList<>();
 	protected static final ArrayList<ICraftable> RECIPE_REGISTRY = new ArrayList<>();
 	protected static final ArrayList<ISmeltable> SMELT_REGISTRY = new ArrayList<>();
+	protected static final ArrayList<IAutoRegisterLivingEntity> ENTITY_REGISTRY = new ArrayList<>();
 
 	public static final void register(IAutoRegister autoRegister) {
 		switch (autoRegister.getType()) {
@@ -36,6 +35,10 @@ public class EasyRegistry {
 		case BLOCK:
 			BLOCK_REGISTRY.add((Block) autoRegister);
 			break;
+		case ENTITY:
+			if(IAutoRegisterLivingEntity.class.isAssignableFrom(autoRegister.getClass()))
+				ENTITY_REGISTRY.add((IAutoRegisterLivingEntity) autoRegister);
+			break;
 		default:
 			break;
 		}
@@ -44,11 +47,6 @@ public class EasyRegistry {
 		if(autoRegister instanceof ISmeltable)
 			SMELT_REGISTRY.add((ISmeltable) autoRegister);
 			
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void register(IAutoRegisterLivingEntity easyRenderLiving) {
-		
 	}
 
 }
