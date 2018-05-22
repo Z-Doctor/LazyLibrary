@@ -8,16 +8,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import zdoctor.lazylibrary.ModMain;
-import zdoctor.lazylibrary.common.entity.EasyLivingEntity;
+import zdoctor.lazylibrary.common.item.crafting.RecipeBuilder;
 import zdoctor.lazylibrary.common.library.EasyRegistry;
-import zdoctor.lazylibrary.common.library.RecipeBuilder;
 
 public class RegistryHandler extends EasyRegistry {
 	private static final HashMap<ModContainer, Integer> ENTITY_MAP = new HashMap<>();
@@ -38,13 +36,15 @@ public class RegistryHandler extends EasyRegistry {
 			Loader.instance().setActiveModContainer(
 					Loader.instance().getIndexedModList().get(iCraftable.getRegistryName().getResourceDomain()));
 			if (iCraftable.ignoreNBT()) {
-				event.getRegistry().register(iCraftable.getRecipe());
+				IRecipe recipe = iCraftable.getRecipe();
+				if (recipe != null)
+					event.getRegistry().register(recipe);
 				IRecipe[] temp;
 				if ((temp = iCraftable.getAdditionalRecipes()) != null) {
 					event.getRegistry().registerAll(temp);
 				}
 			} else {
-			// System.out.println("Changing: " + iCraftable.getRecipe().getRegistryName());
+				// System.out.println("Changing: " + iCraftable.getRecipe().getRegistryName());
 				event.getRegistry().register(RecipeBuilder.checkNbt(iCraftable.getRecipe()));
 				IRecipe[] temp;
 				if ((temp = iCraftable.getAdditionalRecipes()) != null) {
@@ -72,15 +72,18 @@ public class RegistryHandler extends EasyRegistry {
 			System.out.println("ID:" + id);
 			Loader.instance().setActiveModContainer(mod);
 			if (autoRegister.hasEgg())
-				registerEntity(autoRegister.getRegistryName(), autoRegister.getName(), autoRegister.getEntityClass(), id, mod.getMod(),
-						autoRegister.getTrackingRange(), autoRegister.getUpdateFrequency(),
+				registerEntity(autoRegister.getRegistryName(), autoRegister.getName(), autoRegister.getEntityClass(),
+						id, mod.getMod(), autoRegister.getTrackingRange(), autoRegister.getUpdateFrequency(),
 						autoRegister.sendsVelocityUpdates(), autoRegister.getPrimaryColor(),
 						autoRegister.getSecondaryColor());
 			else
-				registerEntity(autoRegister.getRegistryName(), autoRegister.getName(), autoRegister.getEntityClass(), id, mod.getMod(),
-						autoRegister.getTrackingRange(), autoRegister.getUpdateFrequency(),
+				registerEntity(autoRegister.getRegistryName(), autoRegister.getName(), autoRegister.getEntityClass(),
+						id, mod.getMod(), autoRegister.getTrackingRange(), autoRegister.getUpdateFrequency(),
 						autoRegister.sendsVelocityUpdates());
 		});
+
+		ENTITY_TRACKER.forEach(auto -> autoRegisterEntity(auto.getEntityName(), auto.getEntityClass(), auto.getModId(),
+				auto.getTrackingRange(), auto.getUpdateFrequency(), auto.sendsVelocityUpdates()));
 		Loader.instance().setActiveModContainer(Loader.instance().getIndexedModList().get(ModMain.MODID));
 	}
 
@@ -102,10 +105,11 @@ public class RegistryHandler extends EasyRegistry {
 	 * @param sendsVelocityUpdates
 	 *            Whether to send velocity information packets as well
 	 */
-	public static void registerEntity(ResourceLocation registryName, String entityName, Class<? extends Entity> entityClass, int id,
-			Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
-		EntityRegistry.registerModEntity(registryName, entityClass, entityName, id, mod,
-				trackingRange, updateFrequency, sendsVelocityUpdates);
+	public static void registerEntity(ResourceLocation registryName, String entityName,
+			Class<? extends Entity> entityClass, int id, Object mod, int trackingRange, int updateFrequency,
+			boolean sendsVelocityUpdates) {
+		EntityRegistry.registerModEntity(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency,
+				sendsVelocityUpdates);
 
 	}
 
@@ -131,13 +135,25 @@ public class RegistryHandler extends EasyRegistry {
 	 * @param eggSecondary
 	 *            Secondary egg color
 	 */
-	public static void registerEntity(ResourceLocation registryName, String entityName, Class<? extends Entity> entityClass, int id,
-			Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, int primaryEggColor,
-			int secondaryEggColor) {
-		System.out.println("Reg: " + registryName + ", " + entityClass + ", " + entityName + ", " + id + ", " + mod + ", " +
-				trackingRange + ", " + updateFrequency + ", " + sendsVelocityUpdates + ", " + primaryEggColor + ", " + secondaryEggColor);
-		EntityRegistry.registerModEntity(registryName, entityClass, entityName, id, mod,
-				trackingRange, updateFrequency, sendsVelocityUpdates, primaryEggColor, secondaryEggColor);
+	public static void registerEntity(ResourceLocation registryName, String entityName,
+			Class<? extends Entity> entityClass, int id, Object mod, int trackingRange, int updateFrequency,
+			boolean sendsVelocityUpdates, int primaryEggColor, int secondaryEggColor) {
+		System.out.println("Reg: " + registryName + ", " + entityClass + ", " + entityName + ", " + id + ", " + mod
+				+ ", " + trackingRange + ", " + updateFrequency + ", " + sendsVelocityUpdates + ", " + primaryEggColor
+				+ ", " + secondaryEggColor);
+		EntityRegistry.registerModEntity(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency,
+				sendsVelocityUpdates, primaryEggColor, secondaryEggColor);
+
+	}
+
+	public static void autoRegisterEntity(String entityName, Class<? extends Entity> entityClass, String modId,
+			int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
+		ModContainer mod = Loader.instance().getIndexedModList().get(modId);
+		Loader.instance().setActiveModContainer(mod);
+		int id = ENTITY_MAP.getOrDefault(mod, 0);
+		ENTITY_MAP.put(mod, id + 1);
+		EntityRegistry.registerModEntity(new ResourceLocation(mod.getModId(), entityName), entityClass, entityName, id,
+				modId, trackingRange, updateFrequency, sendsVelocityUpdates);
 
 	}
 

@@ -1,4 +1,4 @@
-package zdoctor.lazylibrary.common.library;
+package zdoctor.lazylibrary.common.item.crafting;
 
 import java.util.function.Consumer;
 
@@ -14,7 +14,6 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import zdoctor.lazylibrary.common.item.crafting.NBTIngredient;
 
 public class RecipeBuilder {
 	public static ShapedRecipes create(String group, int width, int height, ItemStack result, Object... items) {
@@ -58,9 +57,10 @@ public class RecipeBuilder {
 			slot++;
 		}
 		ShapedRecipes recipe = new ShapedRecipes(group, width, height, ingredients, result);
-		recipe.setRegistryName(result.getItem().getRegistryName());
-//		System.out.println("Registered ShapedRecipe: " + recipe.getRegistryName());
-//		recipe.getIngredients().forEach(ingredient -> System.out.println(ingredient.getMatchingStacks()));
+		recipe.setRegistryName(result.getItem().getUnlocalizedName(result));
+		// System.out.println("Registered ShapedRecipe: " + recipe.getRegistryName());
+		// recipe.getIngredients().forEach(ingredient ->
+		// System.out.println(ingredient.getMatchingStacks()));
 		return recipe;
 	}
 
@@ -73,10 +73,10 @@ public class RecipeBuilder {
 				if (Item[].class.isAssignableFrom(item.getClass()))
 					ingredients.add(Ingredient.fromItems((Item[]) item));
 				else if (ItemStack[].class.isAssignableFrom(item.getClass())) {
-//					System.out.println("Adding Stacks");
-//					for (ItemStack stack : (ItemStack[]) item) {
-//						System.out.println("Item: " + stack.getDisplayName());
-//					}
+					// System.out.println("Adding Stacks");
+					// for (ItemStack stack : (ItemStack[]) item) {
+					// System.out.println("Item: " + stack.getDisplayName());
+					// }
 					ingredients.add(Ingredient.fromStacks((ItemStack[]) item));
 				} else if (Block[].class.isAssignableFrom(item.getClass())) {
 					Item[] itemBlocks = new Item[((Block[]) item).length];
@@ -108,51 +108,69 @@ public class RecipeBuilder {
 				ingredients.add(Ingredient.fromItem(Item.getByNameOrId((String) item)));
 		}
 		ShapelessRecipes recipe = new ShapelessRecipes(group, result, ingredients);
-		recipe.setRegistryName(result.getItem().getRegistryName());
-//		System.out.println("Registered Shapeless: " + recipe.getRegistryName());
-//		recipe.getIngredients().forEach(ingredient -> System.out.println(ingredient.getMatchingStacks()));
+		recipe.setRegistryName(result.getItem().getUnlocalizedName(result));
+		// System.out.println("Registered Shapeless: " + recipe.getRegistryName());
+		// recipe.getIngredients().forEach(ingredient ->
+		// System.out.println(ingredient.getMatchingStacks()));
 		return recipe;
 	}
 
 	public static IRecipe checkNbt(IRecipe recipe) {
 		for (int i = 0; i < recipe.getIngredients().size(); i++) {
 			Ingredient modifiedIngredient = NBTIngredient.fromIngredient(recipe.getIngredients().get(i));
-//			System.out.println("Modified: " + modifiedIngredient.getMatchingStacks()[0]);
+			// System.out.println("Modified: " + modifiedIngredient.getMatchingStacks()[0]);
 			recipe.getIngredients().set(i, modifiedIngredient);
 		}
-		
+
 		if (recipe instanceof ShapelessRecipes) {
 			ResourceLocation tempRegistryName = recipe.getRegistryName();
 			String group = recipe.getGroup();
 			ItemStack recipeResult = recipe.getRecipeOutput();
 			NonNullList<Ingredient> ingredientList = recipe.getIngredients();
-			
+
 			recipe = new ShapelessRecipes(group, recipeResult, ingredientList) {
 				@Override
 				public boolean matches(InventoryCrafting inv, World worldIn) {
-//					System.out.println("Checking for match");
+					// System.out.println("Checking for match");
 					int ingredientCount = 0;
 					for (int i = 0; i < inv.getHeight(); ++i) {
 						for (int j = 0; j < inv.getWidth(); ++j) {
 							ItemStack itemstack = inv.getStackInRowAndColumn(j, i);
 							if (!itemstack.isEmpty()) {
-//								System.out.println("Item: " + itemstack);
+								// System.out.println("Item: " + itemstack);
 								for (Ingredient ingredient : ingredientList) {
-									if(ingredient.apply(itemstack))
+									if (ingredient.apply(itemstack))
 										ingredientCount++;
 								}
 							}
 						}
 					}
-//					System.out.println("Matches Found: " + ingredientCount + " of " + ingredientList.size());
+					// System.out.println("Matches Found: " + ingredientCount + " of " +
+					// ingredientList.size());
 					return ingredientCount == ingredientList.size();
 				}
 			};
 			recipe.setRegistryName(tempRegistryName);
 		}
-//		System.out.println("Modified Recipe: " + recipe.getRegistryName());
-//		recipe.getIngredients().forEach(ingredient -> System.out.println(ingredient.getMatchingStacks()));
+		// System.out.println("Modified Recipe: " + recipe.getRegistryName());
+		// recipe.getIngredients().forEach(ingredient ->
+		// System.out.println(ingredient.getMatchingStacks()));
 		return recipe;
+	}
+
+	public static class CustomShapedRecipes extends ShapedRecipes {
+		public CustomShapedRecipes(ShapedRecipes recipe) {
+			super(recipe.getGroup(), recipe.recipeWidth, recipe.recipeHeight, recipe.getIngredients(),
+					recipe.getRecipeOutput());
+			setRegistryName(recipe.getRegistryName());
+		}
+	}
+
+	public static class CustomShapelessRecipes extends ShapelessRecipes {
+		public CustomShapelessRecipes(ShapelessRecipes recipe) {
+			super(recipe.getGroup(), recipe.getRecipeOutput(), recipe.getIngredients());
+			setRegistryName(recipe.getRegistryName());
+		}
 	}
 
 }
