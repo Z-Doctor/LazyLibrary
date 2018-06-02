@@ -1,10 +1,12 @@
 package zdoctor.lazylibrary.common.config;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.Logger;
+
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
@@ -12,7 +14,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Call in your preInit
+ * A built-in config, create during your preInit
  */
 public class EasyConfig {
 	private static final Map<String, EasyConfig> CONFIG_REGISTRY = new HashMap<>();
@@ -21,6 +23,7 @@ public class EasyConfig {
 	protected String modid;
 	protected Configuration config;
 	protected String defaultCatergory;
+	protected Logger log;
 
 	public EasyConfig() {
 	}
@@ -30,24 +33,15 @@ public class EasyConfig {
 	}
 
 	public EasyConfig(FMLPreInitializationEvent e, String defaultCatergory) {
+		log = e.getModLog();
+		log.debug("Created Config");
+
 		this.defaultCatergory = defaultCatergory;
 		modid = Loader.instance().activeModContainer().getModId();
 		config = new Configuration(e.getSuggestedConfigurationFile());
 		open();
 		CONFIG_REGISTRY.put(modid, this);
-
-	}
-
-	public EasyConfig(File configFile, String modId) {
-		this(configFile, modId, "Default");
-	}
-
-	public EasyConfig(File configFile, String modId, String defaultCatergory) {
-		this.defaultCatergory = defaultCatergory;
-		this.modid = modId;
-		config = new Configuration(configFile);
-		open();
-		CONFIG_REGISTRY.put(modid, this);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public Configuration getConfig() {
@@ -64,6 +58,7 @@ public class EasyConfig {
 	public void open() {
 		config.load();
 		PROPERTIES.forEach(Property::save);
+		log.debug("Config Opened");
 	}
 
 	/**
@@ -72,11 +67,14 @@ public class EasyConfig {
 	 */
 	public void close() {
 		config.save();
+		log.debug("Config Closed");
 	}
 
 	public void sync() {
-		config.save();
 		PROPERTIES.forEach(Property::save);
+		config.save();
+		// PROPERTIES.forEach(Property::save);
+		log.debug("Config Sync");
 	}
 
 	public String getModid() {
@@ -93,6 +91,7 @@ public class EasyConfig {
 		protected T value;
 
 		public Property(EasyConfig config, String category, String name, T value) {
+			config.log.debug("Created Config: {}", name);
 			this.config = config;
 			this.category = category;
 			this.name = name;
@@ -136,16 +135,13 @@ public class EasyConfig {
 
 		@Override
 		public void setValue(Integer value) {
-			if (value < minValue)
-				value = minValue;
-			if (value > maxValue)
-				value = maxValue;
-			super.setValue(value);
+			super.setValue(Math.min(maxValue, Math.max(minValue, value)));
 		}
 
 		@Override
 		public void save() {
 			setValue(config.getConfig().getInt(name, category, defaultValue, minValue, maxValue, comment, name));
+			config.log.debug("Saved Config - Name: {} Value: {}", name, getValue());
 		}
 
 	}
@@ -159,6 +155,7 @@ public class EasyConfig {
 		@Override
 		public void save() {
 			setValue(config.getConfig().getBoolean(name, category, defaultValue, comment, name));
+			config.log.debug("Saved Config - Name: {} Value: {}", name, getValue());
 		}
 
 	}
@@ -172,8 +169,8 @@ public class EasyConfig {
 		@Override
 		public void save() {
 			setValue(config.getConfig().getString(name, category, defaultValue, comment, name));
+			config.log.debug("Saved Config - Name: {} Value: {}", name, getValue());
 		}
 
 	}
-
 }

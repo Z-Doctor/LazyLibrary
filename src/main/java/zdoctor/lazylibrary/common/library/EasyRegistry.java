@@ -1,7 +1,6 @@
 package zdoctor.lazylibrary.common.library;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
@@ -15,7 +14,6 @@ import zdoctor.lazylibrary.common.api.IAutoRegisterLivingEntity;
 import zdoctor.lazylibrary.common.api.IAutoTracker;
 import zdoctor.lazylibrary.common.api.ICraftable;
 import zdoctor.lazylibrary.common.api.ISmeltable;
-import zdoctor.lazylibrary.common.config.EasyConfigGui;
 
 public class EasyRegistry {
 	public static final Map<Block, Item> BLOCK_TO_ITEM = net.minecraftforge.registries.GameData.getBlockItemMap();
@@ -26,7 +24,6 @@ public class EasyRegistry {
 	protected static final ArrayList<ISmeltable> SMELT_REGISTRY = new ArrayList<>();
 	protected static final ArrayList<IAutoRegisterLivingEntity> ENTITY_REGISTRY = new ArrayList<>();
 	protected static final ArrayList<IAutoTracker> ENTITY_TRACKER = new ArrayList<>();
-	protected static final Map<ModContainer, EasyConfigGui> GUIMAP = new HashMap<>();
 
 	public static final void register(IAutoRegister autoRegister) {
 		switch (autoRegister.getType()) {
@@ -48,7 +45,7 @@ public class EasyRegistry {
 				ENTITY_REGISTRY.add((IAutoRegisterLivingEntity) autoRegister);
 			break;
 		case TRACKING:
-			if(autoRegister instanceof IAutoTracker)
+			if (autoRegister instanceof IAutoTracker)
 				ENTITY_TRACKER.add((IAutoTracker) autoRegister);
 			break;
 		default:
@@ -59,10 +56,6 @@ public class EasyRegistry {
 		if (autoRegister instanceof ISmeltable)
 			SMELT_REGISTRY.add((ISmeltable) autoRegister);
 
-	}
-
-	public static void register(EasyConfigGui easyConfigGui) {
-		GUIMAP.put(getActiveMod(), easyConfigGui);
 	}
 
 	public static ModContainer getActiveMod() {
