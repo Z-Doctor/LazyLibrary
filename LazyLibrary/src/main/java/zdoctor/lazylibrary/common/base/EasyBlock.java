@@ -3,6 +3,7 @@ package zdoctor.lazylibrary.common.base;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -22,6 +23,15 @@ public class EasyBlock extends Block implements IAutoRegister {
 
 	public EasyBlock(String unlocalizedName, Material material) {
 		super(material);
+		setUnlocalizedName(unlocalizedName);
+		setRegistryName(unlocalizedName);
+		subNames.add(unlocalizedName);
+		easyItemBlock = new EasyItemBlock(this);
+		EasyRegistry.register(this);
+	}
+	
+	public EasyBlock(String unlocalizedName, Material material, MapColor mapColor) {
+		super(material, mapColor);
 		setUnlocalizedName(unlocalizedName);
 		setRegistryName(unlocalizedName);
 		subNames.add(unlocalizedName);

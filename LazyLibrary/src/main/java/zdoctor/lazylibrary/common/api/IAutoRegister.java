@@ -13,7 +13,7 @@ public interface IAutoRegister {
 		BLOCK,
 		TRACKING,
 		ORE,
-		TILE_ENTITY,
+		BLOCK_TILE_ENTITY,
 		ENTITY;
 	}
 

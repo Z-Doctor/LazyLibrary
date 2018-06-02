@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class EasyConfig {
 	private static final Map<String, EasyConfig> CONFIG_REGISTRY = new HashMap<>();
 	protected final ArrayList<Property> PROPERTIES = new ArrayList<>();
-//	protected final HashMap<String, List<String>> ORDER = new HashMap<>();
 
 	protected String modid;
 	protected Configuration config;
@@ -63,8 +62,6 @@ public class EasyConfig {
 	}
 
 	public void open() {
-//		ORDER.forEach((o1, o2) -> System.out.println(o1 + ": " + o2));
-//		ORDER.forEach(config::setCategoryPropertyOrder);
 		config.load();
 		PROPERTIES.forEach(Property::save);
 	}
@@ -96,16 +93,12 @@ public class EasyConfig {
 		protected T value;
 
 		public Property(EasyConfig config, String category, String name, T value) {
-			System.out.println("Created: " + name);
 			this.config = config;
 			this.category = category;
 			this.name = name;
 			this.defaultValue = value;
 			this.value = value;
 			config.PROPERTIES.add(this);
-			// if (!config.ORDER.containsKey(category))
-			// config.ORDER.put(category, new ArrayList<>());
-			// config.ORDER.get(category).add(category);
 			save();
 			config.close();
 		}
@@ -147,13 +140,12 @@ public class EasyConfig {
 				value = minValue;
 			if (value > maxValue)
 				value = maxValue;
-			setValue(value);
+			super.setValue(value);
 		}
 
 		@Override
 		public void save() {
 			setValue(config.getConfig().getInt(name, category, defaultValue, minValue, maxValue, comment, name));
-			// System.out.println("Int Value: " + getValue());
 		}
 
 	}
@@ -167,7 +159,6 @@ public class EasyConfig {
 		@Override
 		public void save() {
 			setValue(config.getConfig().getBoolean(name, category, defaultValue, comment, name));
-			// System.out.println("Boolean Value: " + getValue());
 		}
 
 	}
@@ -181,8 +172,8 @@ public class EasyConfig {
 		@Override
 		public void save() {
 			setValue(config.getConfig().getString(name, category, defaultValue, comment, name));
-			// System.out.println("String Value: " + getValue());
 		}
 
 	}
+
 }

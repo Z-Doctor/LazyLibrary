@@ -1,4 +1,4 @@
-package zdoctor.lazylibrary.common.base;
+package zdoctor.lazylibrary.common.item;
 
 import java.util.ArrayList;
 import java.util.HashMap;
