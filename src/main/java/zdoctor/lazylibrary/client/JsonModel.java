@@ -10,6 +10,10 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 
+/**
+ * A planned feature
+ */
+@Deprecated()
 public class JsonModel extends ModelBase {
 	protected ModelResourceLocation location;
 	private int version;

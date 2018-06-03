@@ -2,6 +2,10 @@ package zdoctor.lazylibrary.common.api;
 
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * An interface to sort out what is being registered and how to register it
+ *
+ */
 public interface IAutoRegister {
 
 	public RegisterType getType();

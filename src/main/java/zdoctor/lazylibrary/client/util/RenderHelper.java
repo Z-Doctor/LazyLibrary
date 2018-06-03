@@ -9,6 +9,10 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
+/**
+ * A collection of Render function
+ *
+ */
 public class RenderHelper {
 
 	public static ResourceLocation getDynamicTextureLocation(String name, DynamicTexture texture) {

@@ -1,6 +1,7 @@
 package zdoctor.lazylibrary.common.entity;
 
 import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.FMLLog;
 import zdoctor.lazylibrary.common.api.IAutoRegisterLivingEntity;
@@ -9,12 +10,13 @@ import zdoctor.lazylibrary.common.library.EasyRegistry;
 /**
  * This class is used to handle LivingEntity registration. To use the class,
  * extend. The renderer for the entity should be in package
- * xxx.<modid>.client.renderer.entity
+ * xxx.<modid>.client.renderer.entity.Render + [Entity Name]
  * 
+ * Renderer must also have a construct with just {@link RenderManager}
  * @author Z_Doctor
  *
  */
-public abstract class EasyLivingEntity extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<EasyLivingEntity>
+public class EasyLivingEntity extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<EasyLivingEntity>
 		implements IAutoRegisterLivingEntity {
 	private int trackingRange = 48;
 	private int updateFrequenc = 3;
@@ -112,8 +114,8 @@ public abstract class EasyLivingEntity extends net.minecraftforge.registries.IFo
 	@Override
 	public Class<? extends RenderLivingBase> getRendererClass() {
 		String[] path = new String[] { getRegistryName().getResourceDomain(), getName()};
-		String rendererClassPath = getClass().getPackage().getName().toString().replaceAll(path[0] + "\\..*",
-				path[0] + ".client.renderer.Renderer" + path[1]);
+		String rendererClassPath = getEntityClass().getPackage().getName().toString().replaceAll(path[0] + "\\..*",
+				path[0] + ".client.renderer.entity.Render" + path[1]);
 		Class<? extends RenderLivingBase> rendererClass = null;
 		try {
 			rendererClass = (Class<? extends RenderLivingBase>) Class.forName(rendererClassPath);

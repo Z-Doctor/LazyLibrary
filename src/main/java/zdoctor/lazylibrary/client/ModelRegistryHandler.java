@@ -18,9 +18,21 @@ import zdoctor.lazylibrary.ModMain;
 import zdoctor.lazylibrary.common.api.IAutoRegister;
 import zdoctor.lazylibrary.common.library.EasyRegistry;
 
+/**
+ * This class handles registering the models of all Items, Blocks and Living
+ * Entities
+ *
+ */
 @SideOnly(Side.CLIENT)
 public class ModelRegistryHandler extends EasyRegistry {
+	/**
+	 * Used Internally, do not use
+	 * 
+	 * @param event
+	 *            ModelRegistryEvent
+	 */
 	@SubscribeEvent
+	@Deprecated
 	public void registerModels(ModelRegistryEvent event) {
 		registerItemModels();
 		registerBlockModels();
@@ -46,7 +58,7 @@ public class ModelRegistryHandler extends EasyRegistry {
 
 	private void registerBlockModels() {
 		BLOCK_REGISTRY.forEach(block -> {
-			if(block instanceof IAutoRegister) {
+			if (block instanceof IAutoRegister) {
 				IAutoRegister autoRegister = (IAutoRegister) block;
 				for (int i = 0; i < autoRegister.getSubCount(); i++) {
 					ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), i,
@@ -55,11 +67,12 @@ public class ModelRegistryHandler extends EasyRegistry {
 									"inventory"));
 				}
 			} else {
-				ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(block.getRegistryName(), "inventory"));
+				ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0,
+						new ModelResourceLocation(block.getRegistryName(), "inventory"));
 			}
 		});
 	}
-	
+
 	private void registerLivingEntities() {
 		ENTITY_REGISTRY.forEach(autoRegister -> {
 			Loader.instance().setActiveModContainer(
@@ -68,12 +81,28 @@ public class ModelRegistryHandler extends EasyRegistry {
 		});
 		Loader.instance().setActiveModContainer(Loader.instance().getIndexedModList().get(ModMain.MODID));
 	}
-	
+
+	/**
+	 * A class to register an Entities rendering
+	 * 
+	 * @param entityClass
+	 *            The Class of the Entity
+	 * @param renderFactory
+	 *            The RenderFactory of the Entity
+	 */
 	public static void registerEntityRenderingHandler(Class<? extends Entity> entityClass,
 			IRenderFactory renderFactory) {
 		RenderingRegistry.registerEntityRenderingHandler(entityClass, renderFactory);
 	}
-	
+
+	/**
+	 * A class to register an Entities rendering
+	 * 
+	 * @param entityClass
+	 *            The Class of the Entity
+	 * @param entityRender
+	 *            The RenderingClass of the Entity
+	 */
 	public static void registerEntityRenderingHandler(Class<? extends Entity> entityClass,
 			Class<? extends RenderLivingBase> entityRender) {
 		registerEntityRenderingHandler(entityClass, new IRenderFactory() {
@@ -89,6 +118,5 @@ public class ModelRegistryHandler extends EasyRegistry {
 			}
 		});
 	}
-
 
 }

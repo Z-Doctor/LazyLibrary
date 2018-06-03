@@ -17,20 +17,36 @@ import zdoctor.lazylibrary.ModMain;
 import zdoctor.lazylibrary.common.item.crafting.RecipeBuilder;
 import zdoctor.lazylibrary.common.library.EasyRegistry;
 
+/**
+ * This class handles the registration of all items, blocks and entities
+ *
+ */
 public class RegistryHandler extends EasyRegistry {
 	private static final HashMap<ModContainer, Integer> ENTITY_MAP = new HashMap<>();
 
+	/**
+	 * Used internally
+	 */
 	@SubscribeEvent
+	@Deprecated
 	public void registerItems(RegistryEvent.Register<Item> event) {
 		event.getRegistry().registerAll(ITEM_REGISTRY.toArray(new Item[] {}));
 	}
 
+	/**
+	 * Used internally
+	 */
 	@SubscribeEvent
+	@Deprecated
 	public void registerBlocks(RegistryEvent.Register<Block> event) {
 		event.getRegistry().registerAll(BLOCK_REGISTRY.toArray(new Block[] {}));
 	}
 
+	/**
+	 * Used internally
+	 */
 	@SubscribeEvent
+	@Deprecated
 	public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 		RECIPE_REGISTRY.forEach(iCraftable -> {
 			Loader.instance().setActiveModContainer(
@@ -62,6 +78,10 @@ public class RegistryHandler extends EasyRegistry {
 		Loader.instance().setActiveModContainer(Loader.instance().getIndexedModList().get(ModMain.MODID));
 	}
 
+	/**
+	 * Used internally
+	 */
+	@Deprecated
 	public static void registerEntities() {
 		ENTITY_REGISTRY.forEach(autoRegister -> {
 			ModContainer mod = Loader.instance().getIndexedModList()
@@ -88,12 +108,14 @@ public class RegistryHandler extends EasyRegistry {
 	}
 
 	/**
-	 * Register the mod entity type with FML
+	 * Registers the Mod Entity
 	 * 
-	 * @param entityClass
-	 *            The entity class
+	 * @param registryName
+	 *            The registery name of the entity
 	 * @param entityName
 	 *            A unique name for the entity
+	 * @param entityClass
+	 *            The entity class
 	 * @param id
 	 *            A mod specific ID for the entity
 	 * @param mod
@@ -114,12 +136,14 @@ public class RegistryHandler extends EasyRegistry {
 	}
 
 	/**
-	 * Register the mod entity type with FML This will also register a spawn egg.
+	 * Registers the mod entity with a spawn egg.
 	 * 
-	 * @param entityClass
-	 *            The entity class
+	 * @param registryName
+	 *            The registery name of the entity
 	 * @param entityName
 	 *            A unique name for the entity
+	 * @param entityClass
+	 *            The entity class
 	 * @param id
 	 *            A mod specific ID for the entity
 	 * @param mod
@@ -146,6 +170,22 @@ public class RegistryHandler extends EasyRegistry {
 
 	}
 
+	/**
+	 * Registers a Mod Entity, creating with some generated values
+	 * 
+	 * @param entityName
+	 *            A unique name for the entity
+	 * @param entityClass
+	 *            The entity class
+	 * @param modId
+	 *            The ModId of the mod
+	 * @param trackingRange
+	 *            The range at which MC will send tracking updates
+	 * @param updateFrequency
+	 *            The frequency of tracking updates
+	 * @param sendsVelocityUpdates
+	 *            Whether to send velocity information packets as well
+	 */
 	public static void autoRegisterEntity(String entityName, Class<? extends Entity> entityClass, String modId,
 			int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
 		ModContainer mod = Loader.instance().getIndexedModList().get(modId);
