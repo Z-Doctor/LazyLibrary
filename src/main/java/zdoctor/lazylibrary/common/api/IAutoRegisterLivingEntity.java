@@ -40,4 +40,9 @@ public interface IAutoRegisterLivingEntity extends IAutoRegister {
 	public int getTrackingRange();
 
 	public String getName();
+	
+	@Override
+	default Object getObject() {
+		return null;
+	}
 }

@@ -19,12 +19,12 @@ public class EasyBlockFalling extends EasyBlock {
 	public static boolean fallInstantly;
 
 	public EasyBlockFalling(String name) {
-		super(name, Material.SAND);
-		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+		this(name, Material.SAND);
 	}
 
 	public EasyBlockFalling(String name, Material materialIn) {
 		super(name, materialIn);
+		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 	}
 
 	/**

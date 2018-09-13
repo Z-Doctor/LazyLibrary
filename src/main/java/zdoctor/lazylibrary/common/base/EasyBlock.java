@@ -11,11 +11,13 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import zdoctor.lazylibrary.common.api.IAutoRegister;
+import zdoctor.lazylibrary.common.api.IEasyBlock;
 import zdoctor.lazylibrary.common.library.EasyRegistry;
 
-public class EasyBlock extends Block implements IAutoRegister {
+public class EasyBlock extends Block implements IAutoRegister, IEasyBlock {
 	protected ArrayList<String> subNames = new ArrayList<>();
-	protected EasyItemBlock easyItemBlock;
+	protected ItemBlock easyItemBlock;
+	private Block block;
 
 	public EasyBlock(String unlocalizedName) {
 		this(unlocalizedName, Material.ROCK);
@@ -25,25 +27,59 @@ public class EasyBlock extends Block implements IAutoRegister {
 		super(material);
 		setUnlocalizedName(unlocalizedName);
 		setRegistryName(unlocalizedName);
-		subNames.add(unlocalizedName);
-		easyItemBlock = new EasyItemBlock(this);
+		this.block = this;
+		easyItemBlock = createItemBlock(block);
+		addSubtype(unlocalizedName);
 		EasyRegistry.register(this);
 	}
-	
+
 	public EasyBlock(String unlocalizedName, Material material, MapColor mapColor) {
 		super(material, mapColor);
 		setUnlocalizedName(unlocalizedName);
 		setRegistryName(unlocalizedName);
-		subNames.add(unlocalizedName);
-		easyItemBlock = new EasyItemBlock(this);
+		this.block = this;
+		easyItemBlock = createItemBlock(block);
+		addSubtype(unlocalizedName);
 		EasyRegistry.register(this);
 	}
 
+	public EasyBlock(String unlocalizedName, Block block) {
+		super(block.getMaterial(block.getDefaultState()), block.getMapColor(block.getDefaultState(), null, null));
+		setUnlocalizedName(unlocalizedName);
+		setRegistryName(unlocalizedName);
+		this.block = block;
+		block.setUnlocalizedName(unlocalizedName);
+		block.setRegistryName(unlocalizedName);
+		easyItemBlock = createItemBlock(block);
+		addSubtype(unlocalizedName);
+		EasyRegistry.register(this);
+	}
+	
+	@Override
+	public Block setCreativeTab(CreativeTabs tab) {
+		if(easyItemBlock != null)
+			easyItemBlock.setCreativeTab(tab);
+		return super.setCreativeTab(tab);
+	}
+
+	/**
+	 * Call this if you want the block to create its own item
+	 */
+	@Override
+	public ItemBlock createItemBlock(Block block) {
+		return new EasyItemBlock(block);
+	}
+
+	@Override
 	public EasyBlock addSubtype(String subName) {
+		if(easyItemBlock != null && easyItemBlock instanceof EasyItemBlock)
+			((EasyItemBlock) easyItemBlock).addSubtype(subName);
+			
 		subNames.add(subName);
 		return this;
 	}
-	
+
+	@Override
 	public EasyBlock setContainerItem(Item item) {
 		easyItemBlock.setContainerItem(item);
 		return this;
@@ -70,8 +106,13 @@ public class EasyBlock extends Block implements IAutoRegister {
 		return subNames.get(meta);
 	}
 
+	@Override
+	public Object getObject() {
+		return block;
+	}
+
 	public static class EasyItemBlock extends ItemBlock implements IAutoRegister {
-		
+
 		protected ArrayList<String> subNames;
 		private int burnTime = -1;
 
@@ -79,7 +120,9 @@ public class EasyBlock extends Block implements IAutoRegister {
 			super(block);
 			setUnlocalizedName(block.getUnlocalizedName());
 			setRegistryName(block.getRegistryName());
+			setCreativeTab(block.getCreativeTabToDisplayOn());
 			subNames = new ArrayList<>();
+			setHasSubtypes(subNames.size() > 1);
 			EasyRegistry.register(this);
 		}
 
@@ -87,8 +130,9 @@ public class EasyBlock extends Block implements IAutoRegister {
 			super(block);
 			setUnlocalizedName(block.getUnlocalizedName());
 			setRegistryName(block.getRegistryName());
+			setCreativeTab(block.getCreativeTabToDisplayOn());
 			subNames = new ArrayList<>(block.subNames);
-			setHasSubtypes(subNames.size() > 0);
+			setHasSubtypes(subNames.size() > 1);
 			EasyRegistry.register(this);
 		}
 
@@ -97,12 +141,12 @@ public class EasyBlock extends Block implements IAutoRegister {
 			subNames.add(subName);
 			return this;
 		}
-		
+
 		public EasyItemBlock setContainerItem(Item item) {
 			setContainerItem(item);
 			return this;
 		}
-		
+
 		public void setBurnTime(int burnTime) {
 			this.burnTime = burnTime;
 		}
@@ -118,7 +162,7 @@ public class EasyBlock extends Block implements IAutoRegister {
 				for (int i = 0; i < subNames.size(); i++)
 					subItems.add(new ItemStack(this, 1, i));
 		}
-		
+
 		@Override
 		public Block getBlock() {
 			return block;
@@ -130,7 +174,7 @@ public class EasyBlock extends Block implements IAutoRegister {
 				return super.getUnlocalizedName(stack);
 			return "tile." + subNames.get(stack.getMetadata());
 		}
-		
+
 		@Override
 		public String getUnlocalizedName() {
 			return "tile." + subNames.get(0);
@@ -151,5 +195,16 @@ public class EasyBlock extends Block implements IAutoRegister {
 			return subNames.get(meta);
 		}
 
+		@Override
+		public Object getObject() {
+			return this;
+		}
+		
+		@Override
+		public int getMetadata(ItemStack stack) {
+			return super.getMetadata(stack);
+		}
+
 	}
+
 }

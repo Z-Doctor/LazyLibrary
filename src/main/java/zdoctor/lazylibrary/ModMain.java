@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import zdoctor.lazylibrary.client.GuiConfigHandler;
 import zdoctor.lazylibrary.proxy.CommonProxy;
 
 @Mod(modid = ModMain.MODID, version = "1.1.0.0")
@@ -66,7 +67,7 @@ public class ModMain {
 					} catch (IllegalArgumentException | IllegalAccessException e) {
 						e.printStackTrace();
 					}
-					// GuiConfigHandler.fmlPostInit();
+					GuiConfigHandler.fmlPostInit();
 				}
 			};
 			t.start();

@@ -1,38 +1,17 @@
 package zdoctor.lazylibrary.common.item;
 
-import java.util.ArrayList;
-
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
-import zdoctor.lazylibrary.common.api.IAutoRegister;
-import zdoctor.lazylibrary.common.library.EasyRegistry;
+import zdoctor.lazylibrary.common.base.EasyItem;
 
-public class EasyItemArmor extends ItemArmor implements IAutoRegister {
-	protected ArrayList<String> subNames = new ArrayList<>();
+public class EasyItemArmor extends ItemArmor {
+
+	private EasyItem itemArmor;
 
 	public EasyItemArmor(String unlocalizedName, ArmorMaterial materialIn, int renderIndexIn,
 			EntityEquipmentSlot equipmentSlotIn) {
 		super(materialIn, renderIndexIn, equipmentSlotIn);
-		setUnlocalizedName(unlocalizedName);
-		setRegistryName(unlocalizedName);
-		subNames.add(unlocalizedName);
-
-		EasyRegistry.register(this);
-	}
-
-	@Override
-	public RegisterType getType() {
-		return RegisterType.ITEM;
-	}
-
-	@Override
-	public int getSubCount() {
-		return subNames.size();
-	}
-
-	@Override
-	public String getSubName(int meta) {
-		return subNames.get(meta);
+		itemArmor = new EasyItem(unlocalizedName, this);
 	}
 
 }

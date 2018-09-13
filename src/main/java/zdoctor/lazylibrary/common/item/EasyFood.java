@@ -14,6 +14,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import zdoctor.lazylibrary.common.api.IAutoRegister;
+import zdoctor.lazylibrary.common.base.EasyItem;
 import zdoctor.lazylibrary.common.library.EasyRegistry;
 
 /**
@@ -28,13 +29,13 @@ import zdoctor.lazylibrary.common.library.EasyRegistry;
  * Golden Apple - 4 - 1.2f
  * <p>
  */
-public class EasyFood extends ItemFood implements IAutoRegister {
+public class EasyFood extends ItemFood {
 	protected ArrayList<PotionEffect> effectsOnEaten = new ArrayList<>();
 	protected Map<PotionEffect, Float> chanceOnEaten = new HashMap<>();
-	protected ArrayList<String> subNames = new ArrayList<>();
 
 	protected PotionEffect potionId;
 	protected float potionEffectProbability;
+	private EasyItem foodItem;
 
 	public EasyFood(String name, int amount) {
 		this(name, amount, 0.6F);
@@ -61,17 +62,13 @@ public class EasyFood extends ItemFood implements IAutoRegister {
 	 */
 	public EasyFood(String name, int amount, float saturation, boolean isWolfFood) {
 		super(amount, saturation, isWolfFood);
-		this.setUnlocalizedName(name);
-		this.setRegistryName(name);
 		this.setCreativeTab(CreativeTabs.FOOD);
 		this.setMaxStackSize(64);
-		subNames.add(name);
-		EasyRegistry.register(this);
+		foodItem = new EasyItem(name, this);
 	}
 
 	public EasyFood addSubtype(String subName) {
-		setHasSubtypes(true);
-		subNames.add(subName);
+		foodItem.addSubtype(subName);
 		return this;
 	}
 
@@ -115,31 +112,12 @@ public class EasyFood extends ItemFood implements IAutoRegister {
 
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-		if (isInCreativeTab(tab))
-			for (int i = 0; i < subNames.size(); i++)
-				subItems.add(new ItemStack(this, 1, i));
+		foodItem.getSubItems(tab, subItems);
 	}
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		if (subNames.size() <= stack.getMetadata())
-			return super.getUnlocalizedName(stack);
-		return "item." + subNames.get(stack.getMetadata());
-	}
-
-	@Override
-	public RegisterType getType() {
-		return RegisterType.ITEM;
-	}
-
-	@Override
-	public int getSubCount() {
-		return subNames.size();
-	}
-
-	@Override
-	public String getSubName(int meta) {
-		return subNames.get(meta);
+		return foodItem.getUnlocalizedName(stack);
 	}
 
 	public static class EasyDrink extends EasyFood {

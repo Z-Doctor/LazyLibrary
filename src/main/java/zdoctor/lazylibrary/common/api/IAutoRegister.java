@@ -24,4 +24,6 @@ public interface IAutoRegister {
 	public String getSubName(int meta);
 
 	public ResourceLocation getRegistryName();
+	
+	public Object getObject();
 }

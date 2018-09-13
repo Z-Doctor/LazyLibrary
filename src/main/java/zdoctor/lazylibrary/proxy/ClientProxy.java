@@ -8,18 +8,18 @@ import zdoctor.lazylibrary.client.ModelRegistryHandler;
 
 public class ClientProxy extends CommonProxy {
 	@Override
-    public void preInit(FMLPreInitializationEvent e) {
-        super.preInit(e);
-        MinecraftForge.EVENT_BUS.register(new ModelRegistryHandler());
-    }
+	public void preInit(FMLPreInitializationEvent e) {
+		super.preInit(e);
+		MinecraftForge.EVENT_BUS.register(new ModelRegistryHandler());
+	}
 
-    @Override
-    public void init(FMLInitializationEvent e) {
-        super.init(e);
-    }
+	@Override
+	public void init(FMLInitializationEvent e) {
+		super.init(e);
+	}
 
-    @Override
-    public void postInit(FMLPostInitializationEvent e) {
-        super.postInit(e);
-    }
+	@Override
+	public void postInit(FMLPostInitializationEvent e) {
+		super.postInit(e);
+	}
 }

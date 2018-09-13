@@ -31,4 +31,9 @@ public interface IAutoTracker extends IAutoRegister {
 	int getUpdateFrequency();
 
 	boolean sendsVelocityUpdates();
+	
+	@Override
+	default Object getObject() {
+		return null;
+	}
 }

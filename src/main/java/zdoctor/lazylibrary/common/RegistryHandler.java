@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import zdoctor.lazylibrary.ModMain;
+import zdoctor.lazylibrary.common.api.ITileEntity;
 import zdoctor.lazylibrary.common.item.crafting.RecipeBuilder;
 import zdoctor.lazylibrary.common.library.EasyRegistry;
 
@@ -39,6 +40,8 @@ public class RegistryHandler extends EasyRegistry {
 	@SubscribeEvent
 	@Deprecated
 	public void registerBlocks(RegistryEvent.Register<Block> event) {
+		BLOCK_REGISTRY.forEach(
+				block -> System.out.println("Added:" + block.getUnlocalizedName() + " -> " + block.getRegistryName()));
 		event.getRegistry().registerAll(BLOCK_REGISTRY.toArray(new Block[] {}));
 	}
 
@@ -105,6 +108,22 @@ public class RegistryHandler extends EasyRegistry {
 		ENTITY_TRACKER.forEach(auto -> autoRegisterEntity(auto.getEntityName(), auto.getEntityClass(), auto.getModId(),
 				auto.getTrackingRange(), auto.getUpdateFrequency(), auto.sendsVelocityUpdates()));
 		Loader.instance().setActiveModContainer(Loader.instance().getIndexedModList().get(ModMain.MODID));
+
+		TILE_ENTITY_BLOCK_REGISTRY.forEach(autoRegister -> {
+			if (autoRegister instanceof ITileEntity)
+				GameRegistry.registerTileEntity(((ITileEntity) autoRegister).getEntityClass(),
+						autoRegister.getRegistryName().toString());
+		});
+	}
+	
+	/**
+	 * Used internally
+	 */
+	@Deprecated
+	public static void registerWorldGen() {
+		WORLD_GEN.forEach(gen -> {
+			GameRegistry.registerWorldGenerator(gen, gen.getGenWeight());
+		});
 	}
 
 	/**

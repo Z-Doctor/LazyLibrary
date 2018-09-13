@@ -16,6 +16,7 @@ public class CommonProxy {
 
 	public void init(FMLInitializationEvent e) {
 		RegistryHandler.registerEntities();
+		RegistryHandler.registerWorldGen();
 	}
 
 	public void postInit(FMLPostInitializationEvent e) {

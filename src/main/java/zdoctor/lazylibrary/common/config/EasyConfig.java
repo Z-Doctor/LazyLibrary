@@ -60,6 +60,10 @@ public class EasyConfig {
 		PROPERTIES.forEach(Property::save);
 		log.debug("Config Opened");
 	}
+	
+	public String getTitle() {
+		return getModid();
+	}
 
 	/**
 	 * Called when changes are made and should be called after you are done
